@@ -15,9 +15,15 @@
         <img class="page-header__logo" src="img/logo.png" width="42" height="42" alt="Trip logo">
 
         <div class="trip-main">
+          <!-- Инфо -->
+          <section id="info-container" class="trip-main__trip-info trip-info"></section>
+          <!-- Инфо -->
+
           <div class="trip-main__trip-controls  trip-controls">
             <div class="trip-controls__filters">
               <h2 class="visually-hidden">Filter events</h2>
+              <!-- Фильтры -->
+              <div id="filters-container"></div>
               <!-- Фильтры -->
             </div>
           </div>
@@ -28,13 +34,16 @@
     </header>
     <main class="page-body__page-main  page-main">
       <div class="page-body__container">
-          <section class="trip-events">
-            <h2 class="visually-hidden">Trip events</h2>
+        <section class="trip-events">
+          <h2 class="visually-hidden">Trip events</h2>
+          <!-- Сортировка -->
+          <div id="sort-container"></div>
+          <!-- Сортировка -->
 
-            <!-- Сортировка -->
-
-            <!-- Контент -->
-          </section>
+          <!-- Контент -->
+          <ul id="items-container" class="trip-events__list"></ul>
+          <!-- Контент -->
+        </section>
       </div>
     </main>
   </body>
