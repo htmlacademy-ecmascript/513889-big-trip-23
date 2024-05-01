@@ -1,0 +1,117 @@
+[
+  {
+    "date":"MAR 18",
+    "event":"Taxi Amsterdam",
+    "startTime":"10:30",
+    "endTime":"11:00",
+    "duration":"30M",
+    "price":"20",
+    "offers":[
+      {
+        "offerTitle":"Order Uber",
+        "offerPrice":"20"
+      }
+    ]
+  },
+  {
+    "date":"MAR 18",
+    "event":"Flight Chamonix",
+    "startTime":"12:25",
+    "endTime":"13:35",
+    "duration":"01H 10M",
+    "price":"160",
+    "offers":[
+      {
+        "offerTitle":"Add luggage",
+        "offerPrice":"50"
+      },
+      {
+        "offerTitle":"Switch to comfort",
+        "offerPrice":"80"
+      }
+    ]
+  },
+  {
+    "date":"MAR 18",
+    "event":"Check-in Chamonix",
+    "startTime":"16:20",
+    "endTime":"17:00",
+    "duration":"40M",
+    "price":"600",
+    "offers":[
+      {
+        "offerTitle":"Add breakfast",
+        "offerPrice":"50"
+      }
+    ]
+  },
+  {
+    "date":"MAR 19",
+    "event":"Sightseeing Chamonix",
+    "startTime":"14:20",
+    "endTime":"13:00",
+    "duration":"01H 20M",
+    "price":"50",
+    "offers":[
+      {
+        "offerTitle":"Book tickets",
+        "offerPrice":"40"
+      },
+      {
+        "offerTitle":"Lunch in city",
+        "offerPrice":"30"
+      }
+    ]
+  },
+  {
+    "date":"MAR 19",
+    "event":"Drive Geneva",
+    "startTime":"16:00",
+    "endTime":"17:00",
+    "duration":"01H 00M",
+    "price":"20",
+    "offers":[
+
+    ]
+  },
+  {
+    "date":"MAR 19",
+    "event":"Flight Geneva",
+    "startTime":"18:00",
+    "endTime":"19:00",
+    "duration":"01H 00M",
+    "price":"20",
+    "offers":[
+      {
+        "offerTitle":"Add luggage",
+        "offerPrice":"30"
+      },
+      {
+        "offerTitle":"Switch to comfort",
+        "offerPrice":"100"
+      }
+    ]
+  },
+  {
+    "date":"MAR 20",
+    "event":"Drive Geneva",
+    "startTime":"08:25",
+    "endTime":"09:25",
+    "duration":"01H 00M",
+    "price":"20",
+    "offers":[
+
+    ]
+  },
+  {
+    "date":"MAR 20",
+    "event":"Sightseeing Geneva",
+    "startTime":"11:15",
+    "endTime":"12:15",
+    "duration":"01H 00M",
+    "price":"180",
+    "offers":[
+
+    ]
+  }
+]
