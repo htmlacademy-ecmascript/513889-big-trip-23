@@ -1,12 +1,16 @@
 import {createElement} from '../render';
 
 export default class InfoCostView {
-  infoCost = '1230';
+  totalPrice = 0;
+
+  constructor(totalPrice) {
+    this.totalPrice = totalPrice;
+  }
 
   getTemplate() {
     return `
       <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">${this.infoCost}</span>
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${this.totalPrice}</span>
       </p>
     `;
   }
