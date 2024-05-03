@@ -1,1 +1,5 @@
-import Presenter from './presenter';const presenter = new Presenter();presenter.init();
+import Presenter from './presenter';
+
+const presenter = new Presenter();
+
+presenter.init();
