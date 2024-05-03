@@ -36,7 +36,7 @@ export default class PointsView {
     return this.point.offers.map((item) => `
       <li class="event__offer">
         <span class="event__offer-title">${item.title}</span>
-        &plus;&euro;&nbsp;
+        +€&nbsp;
         <span class="event__offer-price">${item.price}</span>
       </li>
   `).join('');
