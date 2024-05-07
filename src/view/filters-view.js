@@ -1,10 +1,10 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-export default class FiltersView {
-  filtersList = ['Everything', 'Future', 'Present', 'Past'];
+export default class FiltersView extends AbstractView {
+  #filtersList = ['Everything', 'Future', 'Present', 'Past'];
 
   constructFiltersList() {
-    return this.filtersList.map((item, i) => `
+    return this.#filtersList.map((item, i) => `
       <div class="trip-filters__filter">
         <input
           id="filter-${item}"
@@ -19,7 +19,7 @@ export default class FiltersView {
     `).join('');
   }
 
-  getTemplate() {
+  constructFiltersTemplate() {
     return `
       <form class="trip-filters" action="#" method="get">
         ${this.constructFiltersList()}
@@ -28,10 +28,7 @@ export default class FiltersView {
     `;
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
+  get template() {
+    return this.constructFiltersTemplate();
   }
 }

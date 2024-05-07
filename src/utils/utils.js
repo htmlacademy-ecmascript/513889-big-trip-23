@@ -26,7 +26,10 @@ const humanizeDuration = (dateFrom, dateTo) => {
   return dayjs.duration(diff).format('mm[M]');
 };
 
+const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format('DD/MM/YY hh:mm') : '';
+
 export {
   humanizeDateFormat,
   humanizeDuration,
+  humanizeDateCalendarFormat
 };

@@ -1,6 +1,6 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-export default class SortView {
+export default class SortView extends AbstractView {
   filtersList = ['Day', 'Event', 'Time', 'Price', 'Offers'];
 
   constructSortList() {
@@ -19,7 +19,7 @@ export default class SortView {
     `).join('');
   }
 
-  getTemplate() {
+  constructSortTemplate() {
     return `
       <form class="trip-events__trip-sort trip-sort" action="#" method="get">
         ${this.constructSortList()}
@@ -27,10 +27,7 @@ export default class SortView {
     `;
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
+  get template() {
+    return this.constructSortTemplate();
   }
 }
