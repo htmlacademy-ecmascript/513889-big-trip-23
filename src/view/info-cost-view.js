@@ -8,7 +8,7 @@ export default class InfoCostView extends AbstractView {
     this.#totalPrice = totalPrice;
   }
 
-  constructCostTemplate() {
+  #constructCostTemplate() {
     return `
       <p class="trip-info__cost">
         Total: &euro;&nbsp;<span class="trip-info__cost-value">${this.#totalPrice}</span>
@@ -17,6 +17,6 @@ export default class InfoCostView extends AbstractView {
   }
 
   get template() {
-    return this.constructCostTemplate();
+    return this.#constructCostTemplate();
   }
 }

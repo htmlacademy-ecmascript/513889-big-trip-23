@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
 import { humanizeDateFormat, humanizeDuration } from '../utils/utils';
-import { iconsCollection } from '../constants/constants';
 
 export default class PointsView extends AbstractView {
   #point = {};
@@ -14,13 +13,13 @@ export default class PointsView extends AbstractView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
-  calculatePrice() {
+  #calculatePrice() {
     this.#point.offers?.forEach((offer) => {
       this.#price += offer.price;
     });
   }
 
-  offersSortList() {
+  #offersSortList() {
     if(this.#point.offers.length === 0) {
       return '';
     }
@@ -33,15 +32,15 @@ export default class PointsView extends AbstractView {
   `).join('');
   }
 
-  getFavoriteBtnClass() {
+  #getFavoriteBtnClass() {
     return `event__favorite-btn ${this.#point.isFavorite ? 'event__favorite-btn--active' : ''}`;
   }
 
-  constructPointsTemplate() {
+  #constructPointsTemplate() {
     if(!this.#point) {
       return '';
     }
-    this.calculatePrice();
+    this.#calculatePrice();
 
     return `
       <li class="trip-events__item">
@@ -57,7 +56,7 @@ export default class PointsView extends AbstractView {
               class="event__type-icon"
               width="42"
               height="42"
-              src="${iconsCollection[this.#point.type]}"
+              src="img/icons/${this.#point.type}.png"
               alt="Event type icon"
             >
           </div>
@@ -85,9 +84,9 @@ export default class PointsView extends AbstractView {
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-            ${this.offersSortList()}
+            ${this.#offersSortList()}
           </ul>
-          <button class="${this.getFavoriteBtnClass()}" type="button">
+          <button class="${this.#getFavoriteBtnClass()}" type="button">
             <span class="visually-hidden">Add to favorite</span>
             <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
               <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -107,6 +106,6 @@ export default class PointsView extends AbstractView {
   };
 
   get template() {
-    return this.constructPointsTemplate();
+    return this.#constructPointsTemplate();
   }
 }

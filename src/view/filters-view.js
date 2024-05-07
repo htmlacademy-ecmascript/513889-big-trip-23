@@ -3,7 +3,7 @@ import AbstractView from '../framework/view/abstract-view';
 export default class FiltersView extends AbstractView {
   #filtersList = ['Everything', 'Future', 'Present', 'Past'];
 
-  constructFiltersList() {
+  #constructFiltersList() {
     return this.#filtersList.map((item, i) => `
       <div class="trip-filters__filter">
         <input
@@ -19,16 +19,16 @@ export default class FiltersView extends AbstractView {
     `).join('');
   }
 
-  constructFiltersTemplate() {
+  #constructFiltersTemplate() {
     return `
       <form class="trip-filters" action="#" method="get">
-        ${this.constructFiltersList()}
+        ${this.#constructFiltersList()}
         <button class="visually-hidden" type="submit">Accept filter</button>
       </form>
     `;
   }
 
   get template() {
-    return this.constructFiltersTemplate();
+    return this.#constructFiltersTemplate();
   }
 }

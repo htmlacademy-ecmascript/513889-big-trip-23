@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { iconsCollection, eventsCollection } from '../constants/constants';
+import { eventTypes } from '../constants/constants';
 import { humanizeDateCalendarFormat } from '../utils/utils';
 
 export default class EditView extends AbstractView {
@@ -38,14 +38,14 @@ export default class EditView extends AbstractView {
     this.#handleFormCloseClick();
   };
 
-  calculatePrice() {
+  #calculatePrice() {
     this.#point.offers?.forEach((offer) => {
       this.#price += offer.price;
     });
   }
 
-  constructEventTypeList() {
-    return eventsCollection.map((event) => `
+  #constructEventTypeList() {
+    return eventTypes.map((event) => `
       <div class="event__type-item">
         <input
           id="event-type-${event}-${this.#point.id}"
@@ -61,13 +61,13 @@ export default class EditView extends AbstractView {
     `).join('');
   }
 
-  constructDestinationList() {
+  #constructDestinationList() {
     return this.#destinations.map(({name}) => `
       <option value="${name}"></option>
     `).join('');
   }
 
-  constructOffersList() {
+  #constructOffersList() {
     return this.#offers.find(({type}) => type === this.#point.type)?.offers.map((offer) => {
       const titleLastWord = offer.title.split(' ').pop();
       return `
@@ -89,8 +89,8 @@ export default class EditView extends AbstractView {
     }).join('') || '';
   }
 
-  constructEditTemplate() {
-    this.calculatePrice();
+  #constructEditTemplate() {
+    this.#calculatePrice();
     return `
       <li class="trip-events__item">
         <form class="event event--edit" action="#" method="post">
@@ -98,7 +98,7 @@ export default class EditView extends AbstractView {
             <div class="event__type-wrapper">
               <label class="event__type event__type-btn" for="event-type-toggle-1">
                 <span class="visually-hidden">Choose event type</span>
-                <img class="event__type-icon" width="17" height="17" src="${iconsCollection[this.#point.type]}" alt="Event type icon">
+                <img class="event__type-icon" width="17" height="17" src="img/icons/${this.#point.type}.png" alt="Event type icon">
               </label>
               <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -106,7 +106,7 @@ export default class EditView extends AbstractView {
                 <fieldset class="event__type-group">
                   <legend class="visually-hidden">Event type</legend>
 
-                  ${this.constructEventTypeList()}
+                  ${this.#constructEventTypeList()}
                 </fieldset>
               </div>
             </div>
@@ -124,7 +124,7 @@ export default class EditView extends AbstractView {
                 list="destination-list-${this.#point.id}"
               >
               <datalist id="destination-list-${this.#point.id}">
-                ${this.constructDestinationList()}
+                ${this.#constructDestinationList()}
               </datalist>
             </div>
 
@@ -173,7 +173,7 @@ export default class EditView extends AbstractView {
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
               <div class="event__available-offers">
-                ${this.constructOffersList()}
+                ${this.#constructOffersList()}
               </div>
             </section>
 
@@ -190,6 +190,6 @@ export default class EditView extends AbstractView {
   }
 
   get template() {
-    return this.constructEditTemplate();
+    return this.#constructEditTemplate();
   }
 }

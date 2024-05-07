@@ -3,7 +3,7 @@ import AbstractView from '../framework/view/abstract-view';
 export default class SortView extends AbstractView {
   filtersList = ['Day', 'Event', 'Time', 'Price', 'Offers'];
 
-  constructSortList() {
+  #constructSortList() {
     return this.filtersList.map((item, i) => `
       <div class="trip-sort__item  trip-sort__item--${item.toLocaleLowerCase()}">
         <input
@@ -19,15 +19,15 @@ export default class SortView extends AbstractView {
     `).join('');
   }
 
-  constructSortTemplate() {
+  #constructSortTemplate() {
     return `
       <form class="trip-events__trip-sort trip-sort" action="#" method="get">
-        ${this.constructSortList()}
+        ${this.#constructSortList()}
       </form>
     `;
   }
 
   get template() {
-    return this.constructSortTemplate();
+    return this.#constructSortTemplate();
   }
 }
