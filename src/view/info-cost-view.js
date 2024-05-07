@@ -1,24 +1,22 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
-export default class InfoCostView {
-  totalPrice = 0;
+export default class InfoCostView extends AbstractView {
+  #totalPrice = 0;
 
   constructor(totalPrice) {
-    this.totalPrice = totalPrice;
+    super();
+    this.#totalPrice = totalPrice;
   }
 
-  getTemplate() {
+  #constructCostTemplate() {
     return `
       <p class="trip-info__cost">
-        Total: &euro;&nbsp;<span class="trip-info__cost-value">${this.totalPrice}</span>
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${this.#totalPrice}</span>
       </p>
     `;
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
+  get template() {
+    return this.#constructCostTemplate();
   }
 }
