@@ -1,12 +1,14 @@
 import pointsMock from '../mocks/points-mock.json';
 import offersMock from '../mocks/offers-mock.json';
 import destinationsMock from '../mocks/destinations-mock.json';
+import {FilterTypes} from '../constants/constants';
 
 export default class PointsModel {
   #pointsRaw = pointsMock;
   #offers = offersMock;
   #destinations = destinationsMock;
   #totalPrice = 0;
+  #filters = Object.values(FilterTypes);
 
   get constructPointsList() {
     return this.#pointsRaw.map((item) => {
@@ -19,7 +21,7 @@ export default class PointsModel {
         destination,
         offers
       };
-    });
+    }) || [];
   }
 
   get calculateTotalPrice() {
@@ -37,5 +39,9 @@ export default class PointsModel {
 
   get offers() {
     return this.#offers;
+  }
+
+  get filters() {
+    return this.#filters;
   }
 }

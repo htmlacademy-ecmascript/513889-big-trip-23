@@ -2,8 +2,8 @@
   {
     "id": "a9ce598d-ab9e-4d3d-8f52-10a4cfb90aa8",
     "basePrice": 8328,
-    "dateFrom": "2024-06-18T21:35:08.027Z",
-    "dateTo": "2024-06-19T18:53:08.027Z",
+    "dateFrom": "2024-01-18T21:35:08.027Z",
+    "dateTo": "2024-01-19T18:53:08.027Z",
     "destination": "ea54fb8f-9dfa-4ed4-886f-0c1b4376cc09",
     "isFavorite": true,
     "offers": [],
@@ -12,8 +12,8 @@
   {
     "id": "ef98c79d-6f86-42ad-972d-6b2c34877429",
     "basePrice": 5832,
-    "dateFrom": "2024-06-21T00:43:08.027Z",
-    "dateTo": "2024-06-22T12:57:08.027Z",
+    "dateFrom": "2024-09-21T00:43:08.027Z",
+    "dateTo": "2024-09-22T12:57:08.027Z",
     "destination": "ad6c5c6a-9b1a-4666-a993-11e1e7096ba8",
     "isFavorite": false,
     "offers": [
