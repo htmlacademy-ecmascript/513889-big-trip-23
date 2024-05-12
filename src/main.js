@@ -1,5 +1,5 @@
-import Presenter from './presenter';
+import MainPresenter from './presenters/main-presenter';
 
-const presenter = new Presenter();
+const mainPresenter = new MainPresenter();
 
-presenter.init();
+mainPresenter.init();

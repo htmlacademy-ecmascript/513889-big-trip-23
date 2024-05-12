@@ -34,11 +34,14 @@ const isPointPresent = ({ dateFrom, dateTo }) => dayjs().isAfter(dateFrom) && da
 
 const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
 
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
 export {
   humanizeDateFormat,
   humanizeDuration,
   humanizeDateCalendarFormat,
   isPointFuture,
   isPointPresent,
-  isPointPast
+  isPointPast,
+  updateItem
 };
