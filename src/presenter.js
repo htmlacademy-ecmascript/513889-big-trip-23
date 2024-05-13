@@ -4,8 +4,10 @@ import PointsView from './view/points-view';
 import InfoMainView from './view/info-main-view';
 import InfoCostView from './view/info-cost-view';
 import EditView from './view/edit-view';
+import EmptyView from './view/empty-view';
 import PointsModel from './models/points-model';
 import {render, replace} from './framework/render';
+import {generateFilter} from './utils/filters';
 
 export default class Presenter {
   #pointsModel = new PointsModel();
@@ -15,15 +17,30 @@ export default class Presenter {
   #infoContainerElement = document.querySelector('#info-container');
 
   init() {
-    render(new FiltersView(), this.#filtersContainerElement);
-    render(new SortView(), this.#sortContainerElement);
+    const filters = generateFilter(this.#pointsModel.constructPointsList);
+    render(new FiltersView(filters), this.#filtersContainerElement);
     render(new InfoMainView(), this.#infoContainerElement);
     render(new InfoCostView(this.#pointsModel.calculateTotalPrice), this.#infoContainerElement);
 
-    this.#pointsModel.constructPointsList.forEach((item) => {
-      this.#renderPoint(item);
-    });
+    this.#renderTripEvents();
   }
+
+  #renderEmptyView = () => {
+    render(new EmptyView(this.#pointsModel.filters[0]), this.#sortContainerElement);
+  };
+
+  #renderSortView = () => {
+    render(new SortView(), this.#sortContainerElement);
+  };
+
+  #renderTripEvents = () => {
+    if(this.#pointsModel.constructPointsList.length === 0) {
+      this.#renderEmptyView();
+      return;
+    }
+    this.#renderSortView();
+    this.#pointsModel.constructPointsList.forEach((item) => this.#renderPoint(item));
+  };
 
   #renderPoint = (point) => {
     const pointComponent = new PointsView(point, onEditClick);

@@ -28,8 +28,17 @@ const humanizeDuration = (dateFrom, dateTo) => {
 
 const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format('DD/MM/YY hh:mm') : '';
 
+const isPointFuture = ({ dateFrom }) => dayjs().isBefore(dateFrom);
+
+const isPointPresent = ({ dateFrom, dateTo }) => dayjs().isAfter(dateFrom) && dayjs().isBefore(dateTo);
+
+const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
+
 export {
   humanizeDateFormat,
   humanizeDuration,
-  humanizeDateCalendarFormat
+  humanizeDateCalendarFormat,
+  isPointFuture,
+  isPointPresent,
+  isPointPast
 };

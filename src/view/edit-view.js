@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import { eventTypes } from '../constants/constants';
+import { EVENT_TYPES } from '../constants/constants';
 import { humanizeDateCalendarFormat } from '../utils/utils';
 
 export default class EditView extends AbstractView {
@@ -45,7 +45,7 @@ export default class EditView extends AbstractView {
   }
 
   #constructEventTypeList() {
-    return eventTypes.map((event) => `
+    return EVENT_TYPES.map((event) => `
       <div class="event__type-item">
         <input
           id="event-type-${event}-${this.#point.id}"
