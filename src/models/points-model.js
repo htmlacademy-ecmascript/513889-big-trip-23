@@ -2,6 +2,7 @@ import pointsMock from '../mocks/points-mock.json';
 import offersMock from '../mocks/offers-mock.json';
 import destinationsMock from '../mocks/destinations-mock.json';
 import {FilterTypes} from '../constants/constants';
+import {sortListByDate} from '../utils/common';
 
 export default class PointsModel {
   #pointsRaw = pointsMock;
@@ -21,7 +22,7 @@ export default class PointsModel {
         destination,
         offers
       };
-    }) || [];
+    }).sort(sortListByDate) || [];
   }
 
   get calculateTotalPrice() {
