@@ -36,6 +36,8 @@ const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
+const toCapitalize = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+
 export {
   humanizeDateFormat,
   humanizeDuration,
@@ -43,5 +45,6 @@ export {
   isPointFuture,
   isPointPresent,
   isPointPast,
-  updateItem
+  updateItem,
+  toCapitalize
 };
