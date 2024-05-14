@@ -36,6 +36,8 @@ export const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
 
 export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
+export const toCapitalize = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+
 export const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
     return 0;
