@@ -1,6 +1,15 @@
 import AbstractView from '../framework/view/abstract-view';
 import {SortTypes} from '../constants/constants';
 export default class SortView extends AbstractView {
+  #handleSortTypeChange = null;
+  #currentSortType = null;
+
+  constructor(onSortTypeChange, currentSortType) {
+    super();
+    this.#handleSortTypeChange = onSortTypeChange;
+    this.#currentSortType = currentSortType;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  }
 
   #constructSortList(item, isChecked) {
     return `
@@ -22,10 +31,20 @@ export default class SortView extends AbstractView {
   #constructSortTemplate() {
     return `
       <form class="trip-events__trip-sort trip-sort" action="#" method="get">
-        ${Object.values(SortTypes).map((item, i) => this.#constructSortList(item, i === 0)).join('')}
+        ${Object.values(SortTypes).map((item) => this.#constructSortList(item, this.#currentSortType === item))
+    .join('')}
       </form>
     `;
   }
+
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    evt.preventDefault();
+    this.#handleSortTypeChange(evt.target.dataset.sortType);
+  };
 
   get template() {
     return this.#constructSortTemplate();
