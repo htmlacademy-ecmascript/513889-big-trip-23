@@ -1,14 +1,14 @@
 import AbstractView from '../framework/view/abstract-view';
 import { EVENT_TYPES } from '../constants/constants';
-import { humanizeDateCalendarFormat } from '../utils/utils';
+import {humanizeDateCalendarFormat, toCapitalize} from '../utils/common';
 
 export default class EditView extends AbstractView {
-  #point = {};
-  #destinations;
-  #offers;
+  #point = null;
+  #destinations = null;
+  #offers = null;
   #price = 0;
-  #handleFormSubmit;
-  #handleFormCloseClick;
+  #handleFormSubmit = null;
+  #handleFormCloseClick = null;
 
   constructor(
     point,
@@ -55,7 +55,7 @@ export default class EditView extends AbstractView {
           value="${event}"
         >
         <label class="event__type-label event__type-label--${event}" for="event-type-${event}-${this.#point.id}">
-          ${event.charAt(0).toUpperCase()}${event.slice(1)}
+          ${toCapitalize(event)}
         </label>
       </div>
     `).join('');

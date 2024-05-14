@@ -1,16 +1,19 @@
 import AbstractView from '../framework/view/abstract-view';
-import { humanizeDateFormat, humanizeDuration } from '../utils/utils';
+import { humanizeDateFormat, humanizeDuration } from '../utils/common';
 
 export default class PointsView extends AbstractView {
   #point = {};
   #price = 0;
   #handleEditClick = null;
+  #handleFavoriteClick = null;
 
-  constructor(point, onEditClick) {
+  constructor(point, onEditClick, onFavoriteClick) {
     super();
     this.#point = point;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
   #calculatePrice() {
@@ -103,6 +106,11 @@ export default class PointsView extends AbstractView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 
   get template() {

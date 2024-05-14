@@ -15,3 +15,11 @@ export const TripEmptyMessages = {
   [FilterTypes.PRESENT]: 'There are no present events now',
   [FilterTypes.PAST]: 'There are no future events now',
 };
+
+export const SortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};

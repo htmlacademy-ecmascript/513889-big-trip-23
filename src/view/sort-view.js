@@ -1,28 +1,28 @@
 import AbstractView from '../framework/view/abstract-view';
-
+import {SortTypes} from '../constants/constants';
 export default class SortView extends AbstractView {
-  filtersList = ['Day', 'Event', 'Time', 'Price', 'Offers'];
 
-  #constructSortList() {
-    return this.filtersList.map((item, i) => `
-      <div class="trip-sort__item  trip-sort__item--${item.toLocaleLowerCase()}">
+  #constructSortList(item, isChecked) {
+    return `
+      <div class="trip-sort__item  trip-sort__item--${item}">
         <input
-          id="sort-${item.toLocaleLowerCase()}"
-          class="trip-sort__input  visually-hidden"
+          id="sort-${item}"
+          class="trip-sort__input visually-hidden"
           type="radio"
           name="trip-sort"
-          value="sort-${item.toLocaleLowerCase()}"
-          ${i === 0 ? 'checked' : ''}
+          value="sort-${item}"
+          ${isChecked ? 'checked' : ''}
+          data-sort-type="${item}"
         >
-        <label class="trip-sort__btn" for="sort-${item.toLocaleLowerCase()}">${item}</label>
+        <label class="trip-sort__btn" for="sort-${item}">${item}</label>
       </div>
-    `).join('');
+    `;
   }
 
   #constructSortTemplate() {
     return `
       <form class="trip-events__trip-sort trip-sort" action="#" method="get">
-        ${this.#constructSortList()}
+        ${Object.values(SortTypes).map((item, i) => this.#constructSortList(item, i === 0)).join('')}
       </form>
     `;
   }
