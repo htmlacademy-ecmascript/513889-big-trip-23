@@ -95,7 +95,6 @@ export default class EditView extends AbstractStatefulView {
   #priceChangeHandler = (evt) => {
     const newBasePrice = evt.target.value;
     if (newBasePrice && !/^[\\D0]+|\\D/g.test(newBasePrice)) {
-      console.log(newBasePrice);
       this.updateElement({
         basePrice: newBasePrice,
       });
