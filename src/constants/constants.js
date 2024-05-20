@@ -23,3 +23,8 @@ export const SortTypes = {
   PRICE: 'price',
   OFFERS: 'offers',
 };
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
