@@ -1,11 +1,7 @@
 import PointsView from '../view/points-view';
 import EditView from '../view/edit-view';
 import {render, replace, remove} from '../framework/render';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
+import {Mode} from '../constants/constants';
 
 export default class PointPresenter {
   #point = null;
@@ -83,6 +79,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#pointEditComponent.resetForm(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -92,10 +89,12 @@ export default class PointPresenter {
   };
 
   #handleEditCloseClick = () => {
+    this.#pointEditComponent.resetForm(this.#point);
     this.#replaceFormToCard();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToCard();
   };
 

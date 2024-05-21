@@ -83,7 +83,7 @@ export default class PointsView extends AbstractView {
             <p class="event__duration">${humanizeDuration(this.#point.dateFrom, this.#point.dateTo)}</p>
           </div>
           <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${this.#price}</span>
+            &euro;&nbsp;<span class="event__price-value">${this.#point.basePrice}</span>
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
