@@ -188,8 +188,8 @@ export default class EditView extends AbstractStatefulView {
     `).join('');
   }
 
-  #constructOffersList() {
-    return this.#offers.find(({type}) => type === this.#point.type)?.offers.map((offer) => {
+  #constructOffersList(state) {
+    return this.#offers.find(({type}) => type === state.type)?.offers.map((offer) => {
       const titleLastWord = offer.title.split(' ').pop();
       return `
         <div class="event__offer-selector">
@@ -294,7 +294,7 @@ export default class EditView extends AbstractStatefulView {
               <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
               <div class="event__available-offers">
-                ${this.#constructOffersList()}
+                ${this.#constructOffersList(state)}
               </div>
             </section>
 
