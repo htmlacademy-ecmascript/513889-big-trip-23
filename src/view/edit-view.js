@@ -8,7 +8,6 @@ export default class EditView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #price = 0;
   #handleFormSubmit = null;
   #handleFormCloseClick = null;
   #datepickerFrom = null;
@@ -25,7 +24,7 @@ export default class EditView extends AbstractStatefulView {
     this._setState({...point});
     this.#point = point;
     this.#destinations = destinations;
-    this.#offers = offers;
+    this.#offers = offers.find(({type}) => type === this._state.type)?.offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormCloseClick = onFormCloseClick;
 
@@ -71,7 +70,7 @@ export default class EditView extends AbstractStatefulView {
 
   #typeChangeHandler = (evt) => {
     evt.preventDefault();
-    if (evt.target.tagName === 'INPUT') {
+    if (evt.target.classList.contains('event__type-input')) {
       this.updateElement({
         type: evt.target.value,
         offers: [],
@@ -96,7 +95,7 @@ export default class EditView extends AbstractStatefulView {
     const newBasePrice = evt.target.value;
     if (newBasePrice && !/^[\\D0]+|\\D/g.test(newBasePrice)) {
       this.updateElement({
-        basePrice: newBasePrice,
+        basePrice: +newBasePrice,
       });
     }
   };
@@ -106,14 +105,17 @@ export default class EditView extends AbstractStatefulView {
     const inputs = this.element.querySelector('.event__available-offers').querySelectorAll('input');
     const offers = [];
 
-    for (const input of inputs) {
+    inputs.forEach((input) => {
       if (input.checked) {
-        offers.push(input.id);
+        const offer = this.#offers.find(({id}) => id === input.value);
+        offers.push(offer);
       }
-    }
+    });
 
-    this._state.offers = offers;
-    this._setState(this._state.offers);
+    this._setState({
+      ...this._state,
+      offers
+    });
   };
 
   #setDatepickerFrom = () => {
@@ -159,23 +161,18 @@ export default class EditView extends AbstractStatefulView {
     this.updateElement({...point});
   };
 
-  #calculatePrice() {
-    this.#point.offers?.forEach((offer) => {
-      this.#price += offer.price;
-    });
-  }
-
-  #constructEventTypeList() {
+  #constructEventTypeList(state) {
     return EVENT_TYPES.map((event) => `
       <div class="event__type-item">
         <input
-          id="event-type-${event}-${this.#point.id}"
+          id="event-type-${event}"
           class="event__type-input visually-hidden"
           type="radio"
           name="event-type"
           value="${event}"
+          ${state.type === event ? 'checked' : ''}
         >
-        <label class="event__type-label event__type-label--${event}" for="event-type-${event}-${this.#point.id}">
+        <label class="event__type-label event__type-label--${event}" for="event-type-${event}">
           ${toCapitalize(event)}
         </label>
       </div>
@@ -188,19 +185,20 @@ export default class EditView extends AbstractStatefulView {
     `).join('');
   }
 
-  #constructOffersList(state) {
-    return this.#offers.find(({type}) => type === state.type)?.offers.map((offer) => {
+  #constructOffersList() {
+    return this.#offers.map((offer) => {
       const titleLastWord = offer.title.split(' ').pop();
       return `
         <div class="event__offer-selector">
           <input
             class="event__offer-checkbox visually-hidden"
-            id="event-offer-${titleLastWord}-${this.#point.id}"
+            id="event-offer-${titleLastWord}-${offer.id}"
             type="checkbox"
             name="event-offer-${titleLastWord}"
+            value="${offer.id}"
             ${this.#point.offers.some(({id}) => id === offer.id) ? 'checked' : ''}
           >
-          <label class="event__offer-label" for="event-offer-${titleLastWord}-${this.#point.id}">
+          <label class="event__offer-label" for="event-offer-${titleLastWord}-${offer.id}">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
@@ -211,7 +209,6 @@ export default class EditView extends AbstractStatefulView {
   }
 
   #constructEditTemplate(state) {
-    this.#calculatePrice();
     return `
       <li class="trip-events__item">
         <form class="event event--edit" action="#" method="post">
@@ -227,7 +224,7 @@ export default class EditView extends AbstractStatefulView {
                 <fieldset class="event__type-group">
                   <legend class="visually-hidden">Event type</legend>
 
-                  ${this.#constructEventTypeList()}
+                  ${this.#constructEventTypeList(state)}
                 </fieldset>
               </div>
             </div>

@@ -10,7 +10,7 @@ export default class PointPresenter {
   #pointContainerElement = document.querySelector('#points-container');
   #pointComponent = null;
   #pointEditComponent = null;
-  #mode = Mode.DEFAULT = null;
+  #mode = Mode.VIEW;
   #handleDataChange = null;
   #handleModeChange = null;
 
@@ -40,7 +40,7 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) {
+    if (this.#mode === Mode.VIEW) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
@@ -58,7 +58,7 @@ export default class PointPresenter {
   }
 
   resetView() {
-    if (this.#mode !== Mode.DEFAULT) {
+    if (this.#mode !== Mode.VIEW) {
       this.#replaceFormToCard();
     }
   }
@@ -73,7 +73,7 @@ export default class PointPresenter {
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
-    this.#mode = Mode.DEFAULT;
+    this.#mode = Mode.VIEW;
   }
 
   #escKeyDownHandler = (evt) => {

@@ -25,6 +25,6 @@ export const SortTypes = {
 };
 
 export const Mode = {
-  DEFAULT: 'DEFAULT',
+  VIEW: 'VIEW',
   EDITING: 'EDITING',
 };
