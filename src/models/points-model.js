@@ -26,8 +26,9 @@ export default class PointsModel {
   }
 
   get calculateTotalPrice() {
-    this.constructPointsList.forEach(({offers}) => {
-      offers.forEach(({price}) => {
+    this.constructPointsList.forEach((point) => {
+      this.#totalPrice += point.basePrice;
+      point.offers.forEach(({price}) => {
         this.#totalPrice += price;
       });
     });

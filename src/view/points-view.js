@@ -12,6 +12,7 @@ export default class PointsView extends AbstractView {
     this.#point = point;
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
+    this.#price = point.basePrice;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
@@ -83,7 +84,7 @@ export default class PointsView extends AbstractView {
             <p class="event__duration">${humanizeDuration(this.#point.dateFrom, this.#point.dateTo)}</p>
           </div>
           <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${this.#point.basePrice}</span>
+            &euro;&nbsp;<span class="event__price-value">${this.#price}</span>
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
