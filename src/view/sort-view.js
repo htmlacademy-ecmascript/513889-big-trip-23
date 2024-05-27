@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import {SortTypes} from '../constants/constants';
+import {SortType, DISABLED_SORT_TYPE} from '../constants/constants';
 export default class SortView extends AbstractView {
   #handleSortTypeChange = null;
   #currentSortType = null;
@@ -21,6 +21,7 @@ export default class SortView extends AbstractView {
           name="trip-sort"
           value="sort-${item}"
           ${isChecked ? 'checked' : ''}
+          ${DISABLED_SORT_TYPE.includes(item) ? 'disabled' : ''}
           data-sort-type="${item}"
         >
         <label class="trip-sort__btn" for="sort-${item}">${item}</label>
@@ -31,7 +32,7 @@ export default class SortView extends AbstractView {
   #constructSortTemplate() {
     return `
       <form class="trip-events__trip-sort trip-sort" action="#" method="get">
-        ${Object.values(SortTypes).map((item) => this.#constructSortList(item, this.#currentSortType === item))
+        ${Object.values(SortType).map((item) => this.#constructSortList(item, this.#currentSortType === item))
     .join('')}
       </form>
     `;

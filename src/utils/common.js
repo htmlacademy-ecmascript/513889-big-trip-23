@@ -34,9 +34,9 @@ export const isPointPresent = ({ dateFrom, dateTo }) => dayjs().isAfter(dateFrom
 
 export const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
 
-export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
 export const toCapitalize = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+
+export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
 export const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
@@ -58,8 +58,6 @@ export const sortListByDate = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateTo, pointB.dateTo);
   return weight ?? dayjs(pointA.dateTo).diff(dayjs(pointB.dateTo));
 };
-
-export const sortListByEvent = (pointA, pointB) => pointB.destination.name - pointA.destination.name;
 
 export const sortListByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 

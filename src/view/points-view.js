@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractView from '../framework/view/abstract-view';
 import { humanizeDateFormat, humanizeDuration } from '../utils/common';
 
@@ -64,7 +65,7 @@ export default class PointsView extends AbstractView {
               alt="Event type icon"
             >
           </div>
-          <h3 class="event__title">${this.#point.type} ${ this.#point.destination.name}</h3>
+          <h3 class="event__title">${this.#point.type} ${this.#point.destination.name}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time

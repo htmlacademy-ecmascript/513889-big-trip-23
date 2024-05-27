@@ -10,23 +10,31 @@ export default class EditView extends AbstractStatefulView {
   #offers = null;
   #handleFormSubmit = null;
   #handleFormCloseClick = null;
+  #handleFormDeleteClick = null;
   #datepickerFrom = null;
   #datepickerTo = null;
+  #componentType = 'edit';
 
-  constructor(
+  constructor({
     point,
     destinations,
     offers,
     onFormSubmit,
     onFormCloseClick,
-  ) {
+    onFormDeleteClick
+  }) {
     super();
-    this._setState({...point});
-    this.#point = point;
+    if(point) {
+      this._setState({...point});
+      this.#point = point;
+      this.#offers = offers.find(({type}) => type === this._state.type)?.offers;
+    } else {
+      this.#componentType = 'new';
+    }
     this.#destinations = destinations;
-    this.#offers = offers.find(({type}) => type === this._state.type)?.offers;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormCloseClick = onFormCloseClick;
+    this.#handleFormDeleteClick = onFormDeleteClick;
 
     this._restoreHandlers();
   }
@@ -47,12 +55,15 @@ export default class EditView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseClickHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__field-group--price').addEventListener('change', this.#priceChangeHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
     if (this.element.querySelector('.event__section--offers')) {
       this.element.querySelector('.event__section--offers').addEventListener('change', this.#offerChangeHandler);
+    }
+    if(this.#componentType === 'edit') {
+      this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCloseClickHandler);
     }
     this.#setDatepickerFrom();
     this.#setDatepickerTo();
@@ -100,6 +111,11 @@ export default class EditView extends AbstractStatefulView {
     }
   };
 
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormDeleteClick({...this._state});
+  };
+
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
     const inputs = this.element.querySelector('.event__available-offers').querySelectorAll('input');
@@ -120,7 +136,7 @@ export default class EditView extends AbstractStatefulView {
 
   #setDatepickerFrom = () => {
     this.#datepickerFrom = flatpickr(
-      this.element.querySelector(`#event-start-time-${this.#point.id}`),
+      this.element.querySelector(`#event-start-time-${this.#componentType === 'edit' ? this.#point.id : ''}`),
       {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateFrom,
@@ -133,7 +149,7 @@ export default class EditView extends AbstractStatefulView {
 
   #setDatepickerTo = () => {
     this.#datepickerTo = flatpickr(
-      this.element.querySelector(`#event-end-time-${this.#point.id}`),
+      this.element.querySelector(`#event-end-time-${this.#componentType === 'edit' ? this.#point.id : ''}`),
       {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateTo,
@@ -169,7 +185,7 @@ export default class EditView extends AbstractStatefulView {
           class="event__type-input visually-hidden"
           type="radio"
           name="event-type"
-          value="${event}"
+          value="${this.#componentType === 'edit' ? event : EVENT_TYPES[0]}"
           ${state.type === event ? 'checked' : ''}
         >
         <label class="event__type-label event__type-label--${event}" for="event-type-${event}">
@@ -230,36 +246,36 @@ export default class EditView extends AbstractStatefulView {
             </div>
 
             <div class="event__field-group event__field-group--destination">
-              <label class="event__label event__type-output" for="event-destination-${state.id}">
+              <label class="event__label event__type-output" for="event-destination-${this.#componentType === 'edit' ? state.id : ''}">
                 ${state.type}
               </label>
               <input
                 class="event__input event__input--destination"
-                id="event-destination-${state.id}"
+                id="event-destination-${this.#componentType === 'edit' ? state.id : ''}"
                 type="text"
-                name="event-destination-${state.id}"
-                value="${state.destination.name}"
-                list="destination-list-${state.id}"
+                name="event-destination-${this.#componentType === 'edit' ? state.id : ''}"
+                value="${this.#componentType === 'edit' ? state.destination.name : ''}"
+                list="destination-list-${this.#componentType === 'edit' ? state.id : ''}"
               >
-              <datalist id="destination-list-${state.id}">
+              <datalist id="destination-list-${this.#componentType === 'edit' ? state.id : ''}">
                 ${this.#constructDestinationList()}
               </datalist>
             </div>
 
             <div class="event__field-group event__field-group--time">
-              <label class="visually-hidden" for="event-start-time-${state.id}">From</label>
+              <label class="visually-hidden" for="event-start-time-${this.#componentType === 'edit' ? state.id : ''}">From</label>
               <input
                 class="event__input event__input--time"
-                id="event-start-time-${state.id}"
+                id="event-start-time-${this.#componentType === 'edit' ? state.id : ''}"
                 type="text"
                 name="event-start-time"
                 value="${humanizeDateCalendarFormat(state.dateFrom)}"
               >
               &mdash;
-              <label class="visually-hidden" for="event-end-time-${state.id}">To</label>
+              <label class="visually-hidden" for="event-end-time-${this.#componentType === 'edit' ? state.id : ''}">To</label>
               <input
                 class="event__input event__input--time"
-                id="event-end-time-${state.id}"
+                id="event-end-time-${this.#componentType === 'edit' ? state.id : ''}"
                 type="text"
                 name="event-end-time"
                 value="${humanizeDateCalendarFormat(state.dateTo)}"
@@ -267,47 +283,51 @@ export default class EditView extends AbstractStatefulView {
             </div>
 
             <div class="event__field-group event__field-group--price">
-              <label class="event__label" for="event-price-${state.id}">
+              <label class="event__label" for="event-price-${this.#componentType === 'edit' ? state.id : ''}">
                 <span class="visually-hidden">Price</span>
                 &euro;
               </label>
               <input
                 class="event__input event__input--price"
-                id="event-price-${state.id}"
+                id="event-price-${this.#componentType === 'edit' ? state.id : ''}"
                 type="text"
                 name="event-price"
-                value="${state.basePrice}"
+                value="${this.#componentType === 'edit' ? state.basePrice : 0}"
               >
             </div>
 
             <button class="event__save-btn btn btn--blue" type="submit">Save</button>
-            <button class="event__reset-btn" type="reset">Delete</button>
-            <button class="event__rollup-btn" type="button">
-              <span class="visually-hidden">Open event</span>
-            </button>
+            <button class="event__reset-btn" type="reset">${this.#componentType === 'edit' ? 'Delete' : 'Cancel'}</button>
+            ${this.#componentType === 'edit' ? `
+              <button class="event__rollup-btn" type="button">
+                <span class="visually-hidden">Open event</span>
+              </button>
+            ` : ''}
           </header>
-          <section class="event__details">
-            <section class="event__section  event__section--offers">
-              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          ${this.#componentType === 'edit' ? `
+            <section class="event__details">
+              <section class="event__section  event__section--offers">
+                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-              <div class="event__available-offers">
-                ${this.#constructOffersList(state)}
-              </div>
-            </section>
+                <div class="event__available-offers">
+                  ${this.#constructOffersList(state)}
+                </div>
+              </section>
 
-            <section class="event__section  event__section--destination">
-              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">
-                ${state.destination.description}
-              </p>
-              <div class="event__photos-container">
-                <div class="event__photos-tape">
-                  ${state.destination.pictures.map((picture) => `
-                    <img class="event__photo" src="${picture.src}" alt="${picture.description}">
-                  `)}
-              </div>
+              <section class="event__section  event__section--destination">
+                <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                <p class="event__destination-description">
+                  ${state.destination.description}
+                </p>
+                <div class="event__photos-container">
+                  <div class="event__photos-tape">
+                    ${state.destination.pictures.map((picture) => `
+                      <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+                    `)}
+                </div>
+              </section>
             </section>
-          </section>
+          ` : ''}
         </form>
       </li>
     `;
