@@ -112,7 +112,12 @@ export default class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      {...this.#point, isFavorite: !this.#point.isFavorite},
+      {
+        ...this.#point,
+        isFavorite: !this.#point.isFavorite,
+        destination: this.#point.destination.id,
+        offers: this.#point.offers.map(({id}) => id)
+      },
     );
   };
 

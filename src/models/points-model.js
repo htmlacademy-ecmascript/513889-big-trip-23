@@ -12,7 +12,7 @@ export default class PointsModel extends Observable{
   #totalPrice = 0;
   #filters = Object.values(FilterType);
 
-  get constructPointsList() {
+  get points() {
     return this.#points.map((item) => {
       const destination = this.#destinations.find(({id}) => id === item.destination);
       const offersListByType = this.#offers.find(({type}) => type === item.type);
@@ -27,7 +27,7 @@ export default class PointsModel extends Observable{
   }
 
   get calculateTotalPrice() {
-    this.constructPointsList.forEach((point) => {
+    this.points.forEach((point) => {
       this.#totalPrice += point.basePrice;
       point.offers.forEach(({price}) => {
         this.#totalPrice += price;
@@ -48,14 +48,17 @@ export default class PointsModel extends Observable{
     return this.#filters;
   }
 
+  set points(points) {
+    this.#points = points;
+  }
+
   updatePoint(updateType, update) {
-    const index = this.constructPointsList.findIndex((point) => point.id === update.id);
+    const index = this.points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
-
-    this.#points = [
+    this.points = [
       ...this.#points.slice(0, index),
       update,
       ...this.#points.slice(index + 1),
@@ -65,7 +68,7 @@ export default class PointsModel extends Observable{
   }
 
   addPoint(updateType, update) {
-    this.#points = [
+    this.points = [
       update,
       ...this.#points,
     ];
@@ -80,7 +83,7 @@ export default class PointsModel extends Observable{
       throw new Error('Can\'t delete unexisting point');
     }
 
-    this.#points = [
+    this.points = [
       ...this.#points.slice(0, index),
       ...this.#points.slice(index + 1),
     ];

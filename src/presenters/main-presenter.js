@@ -38,11 +38,15 @@ export default class MainPresenter {
       this.#handleViewAction,
       this.#handleNewTaskFormClose,
     );
+    this.#filterPresenter = new FilterPresenter(
+      this.#filterModel,
+      this.#pointsModel
+    );
   }
 
   get points() {
     this.#filterType = this.#filterModel.filter;
-    const points = this.#pointsModel.constructPointsList;
+    const points = this.#pointsModel.points;
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -52,9 +56,9 @@ export default class MainPresenter {
         return filteredPoints.sort(sortListByPrice);
       case SortType.TIME:
         return filteredPoints.sort(sortListByTime);
+      default:
+        return filteredPoints;
     }
-
-    return this.#pointsModel.constructPointsList;
   }
 
   init() {
@@ -86,7 +90,7 @@ export default class MainPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(data.id).init(data);
+        this.#pointPresenters.get(data.id).init(this.#pointsModel.points.find(({id}) => id === data.id));
         break;
       case UpdateType.MINOR:
         this.#clearBoard();
@@ -100,10 +104,6 @@ export default class MainPresenter {
   };
 
   #renderBoard = () => {
-    this.#filterPresenter = new FilterPresenter(
-      this.#filterModel,
-      this.#pointsModel
-    );
     this.#filterPresenter.init();
 
     if(this.points.length === 0) {
@@ -137,7 +137,7 @@ export default class MainPresenter {
       return;
     }
     this.#currentSortType = sortType;
-    this.#clearBoard(true);
+    this.#clearBoard();
     this.#renderBoard();
   };
 

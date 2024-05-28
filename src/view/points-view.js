@@ -1,4 +1,3 @@
-import he from 'he';
 import AbstractView from '../framework/view/abstract-view';
 import { humanizeDateFormat, humanizeDuration } from '../utils/common';
 
@@ -13,15 +12,13 @@ export default class PointsView extends AbstractView {
     this.#point = point;
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
-    this.#price = point.basePrice;
+    this.#price = point.basePrice + this.#calculatePrice;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
-  #calculatePrice() {
-    this.#point.offers?.forEach((offer) => {
-      this.#price += offer.price;
-    });
+  get #calculatePrice() {
+    return this.#point.offers?.reduce((acc, current) => acc + current.price, 0);
   }
 
   #offersSortList() {
@@ -45,8 +42,6 @@ export default class PointsView extends AbstractView {
     if(!this.#point) {
       return '';
     }
-    this.#calculatePrice();
-
     return `
       <li class="trip-events__item">
         <div class="event">
@@ -65,7 +60,7 @@ export default class PointsView extends AbstractView {
               alt="Event type icon"
             >
           </div>
-          <h3 class="event__title">${this.#point.type} ${this.#point.destination.name}</h3>
+          <h3 class="event__title">${this.#point.type} ${this.#point.destination?.name}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time
