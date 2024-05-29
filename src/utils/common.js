@@ -26,6 +26,8 @@ export const humanizeDuration = (dateFrom, dateTo) => {
   return dayjs.duration(diff).format('mm[M]');
 };
 
+export const isDatesInOneMonth = (dateA, dateB) => dayjs(dateA).format('MMM') === dayjs(dateB).format('MMM');
+
 export const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format('DD/MM/YY hh:mm') : '';
 
 export const isPointFuture = ({ dateFrom }) => dayjs().isBefore(dateFrom);

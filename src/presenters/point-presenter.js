@@ -111,7 +111,7 @@ export default class PointPresenter {
   #handleFavoriteClick = () => {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       {
         ...this.#point,
         isFavorite: !this.#point.isFavorite,

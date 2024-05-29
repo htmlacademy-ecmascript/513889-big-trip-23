@@ -1,8 +1,14 @@
 import AbstractView from '../framework/view/abstract-view';
 
 export default class InfoMainView extends AbstractView {
-  #infoTitle = 'Amsterdam - Chamonix - Geneva';
-  #infoDates = '18 - 20 Mar';
+  #infoTitle = '';
+  #infoDates = '';
+
+  constructor(destinationsNames, pointsInfoDates) {
+    super();
+    this.#infoTitle = destinationsNames;
+    this.#infoDates = pointsInfoDates;
+  }
 
   #constructMainTemplate() {
     return `

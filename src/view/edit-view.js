@@ -14,6 +14,7 @@ export default class EditView extends AbstractStatefulView {
   #handleFormDeleteClick = null;
   #datepickerFrom = null;
   #datepickerTo = null;
+  #isCreateDisabled = false;
   #componentType = 'edit';
 
   constructor({
@@ -42,6 +43,7 @@ export default class EditView extends AbstractStatefulView {
       this._setState({...blankPoint});
       this.#point = blankPoint;
       this.#componentType = 'new';
+      this.#isCreateDisabled = true;
     }
     this.#offers = offers.find(({type}) => type === this._state.type)?.offers;
     this.#destinations = destinations;
@@ -50,6 +52,15 @@ export default class EditView extends AbstractStatefulView {
     this.#handleFormDeleteClick = onFormDeleteClick;
 
     this._restoreHandlers();
+  }
+
+  get #getIsCreateDisabled () {
+    return this.#componentType === 'new' && (
+      Object.keys(this._state.destination).length === 0
+      || !this._state.dateFrom
+      || !this._state.dateTo
+      || this._state.basePrice === 0
+    );
   }
 
   removeElement() {
@@ -310,7 +321,13 @@ export default class EditView extends AbstractStatefulView {
               >
             </div>
 
-            <button class="event__save-btn btn btn--blue" type="submit">Save</button>
+            <button
+             class="event__save-btn btn btn--blue"
+             type="submit"
+             ${this.#getIsCreateDisabled ? 'disabled' : ''}
+            >
+                Save
+            </button>
             <button class="event__reset-btn" type="reset">${this.#componentType === 'edit' ? 'Delete' : 'Cancel'}</button>
             ${this.#componentType === 'edit' ? `
               <button class="event__rollup-btn" type="button">
@@ -327,7 +344,7 @@ export default class EditView extends AbstractStatefulView {
                   ${this.#constructOffersList()}
                 </div>
               </section>
-              ${this._state.offers.length > 0 ? `` : ''}
+              ${this._state.offers.length > 0 ? '' : ''}
               <section class="event__section  event__section--destination">
                 <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                 <p class="event__destination-description">

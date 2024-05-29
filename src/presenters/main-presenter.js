@@ -1,5 +1,3 @@
-import InfoMainView from '../view/info-main-view';
-import InfoCostView from '../view/info-cost-view';
 import SortView from '../view/sort-view';
 import EmptyView from '../view/empty-view';
 import NewPointButtonView from '../view/new-point-button-view';
@@ -7,6 +5,7 @@ import PointsModel from '../models/points-model';
 import FilterModel from '../models/filter-model';
 import PointPresenter from '../presenters/point-presenter';
 import FilterPresenter from '../presenters/filter-presenter.js';
+import PointInfoPresenter from './point-info-presenter';
 import NewPointPresenter from './new-point-presenter';
 import {remove, render, RenderPosition} from '../framework/render';
 import {sortListByDate, sortListByPrice, sortListByTime} from '../utils/common';
@@ -16,13 +15,13 @@ import {filter} from '../utils/filters';
 export default class MainPresenter {
   #pointsModel = new PointsModel();
   #filterModel = new FilterModel();
-  #infoContainerElement = document.querySelector('#info-container');
   #sortContainerElement = document.querySelector('#sort-container');
   #tripMainElement = document.querySelector('.trip-main');
   #sortComponent = null;
   #noPointComponent = null;
   #newPointButtonComponent = null;
   #filterPresenter = null;
+  #pointInfoPresenter = null;
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
@@ -40,6 +39,9 @@ export default class MainPresenter {
     );
     this.#filterPresenter = new FilterPresenter(
       this.#filterModel,
+      this.#pointsModel
+    );
+    this.#pointInfoPresenter = new PointInfoPresenter(
       this.#pointsModel
     );
   }
@@ -62,8 +64,6 @@ export default class MainPresenter {
   }
 
   init() {
-    render(new InfoMainView(), this.#infoContainerElement);
-    render(new InfoCostView(this.#pointsModel.calculateTotalPrice), this.#infoContainerElement);
     this.#renderNewPointButton();
     this.#renderBoard();
   }
@@ -104,6 +104,7 @@ export default class MainPresenter {
   };
 
   #renderBoard = () => {
+    this.#pointInfoPresenter.init();
     this.#filterPresenter.init();
 
     if(this.points.length === 0) {

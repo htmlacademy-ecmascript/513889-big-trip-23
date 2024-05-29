@@ -2,14 +2,13 @@ import pointsMock from '../mocks/points-mock.json';
 import offersMock from '../mocks/offers-mock.json';
 import destinationsMock from '../mocks/destinations-mock.json';
 import {FilterType} from '../constants/constants';
-import {sortListByDate} from '../utils/common';
+import {humanizeDateFormat, isDatesInOneMonth, sortListByDate} from '../utils/common';
 import Observable from '../framework/observable';
 
 export default class PointsModel extends Observable{
   #points = pointsMock;
   #offers = offersMock;
   #destinations = destinationsMock;
-  #totalPrice = 0;
   #filters = Object.values(FilterType);
 
   get points() {
@@ -27,13 +26,43 @@ export default class PointsModel extends Observable{
   }
 
   get calculateTotalPrice() {
-    this.points.forEach((point) => {
-      this.#totalPrice += point.basePrice;
-      point.offers.forEach(({price}) => {
-        this.#totalPrice += price;
+    return this.points.reduce((acc, item) => {
+      acc += item.basePrice;
+      item.offers.forEach(({price}) => {
+        acc += price;
       });
-    });
-    return this.#totalPrice;
+      return acc;
+    }, 0);
+  }
+
+  get destinationsNames() {
+    const destinationsNamesArr = this.points.map(({destination}) => destination.name);
+
+    switch (destinationsNamesArr.length) {
+      case 0:
+        return '';
+      case 1:
+        return destinationsNamesArr[0];
+      case 2:
+      case 3:
+        return destinationsNamesArr.join(' — ');
+      default:
+        return `${destinationsNamesArr[0]} — ... — ${destinationsNamesArr[destinationsNamesArr.length - 1]}`;
+    }
+  }
+
+  get pointsInfoDates() {
+    const dateFrom = this.points[0]?.dateFrom || '';
+    const dateTo = this.points[this.points.length - 1]?.dateTo || '';
+
+    const startingDateTemplate = isDatesInOneMonth(dateFrom, dateTo)
+      ? 'DD'
+      : 'DD MMM';
+
+    const startingDate = humanizeDateFormat(dateFrom, startingDateTemplate);
+    const endingDate = humanizeDateFormat(dateTo, 'DD MMM');
+
+    return `${startingDate} - ${endingDate}`;
   }
 
   get destinations() {
