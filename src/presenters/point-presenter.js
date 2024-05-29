@@ -2,7 +2,6 @@ import PointsView from '../view/points-view';
 import EditView from '../view/edit-view';
 import {render, replace, remove} from '../framework/render';
 import {Mode, UpdateType, UserAction} from '../constants/constants';
-import {isDatesEqual} from '../utils/common';
 
 export default class PointPresenter {
   #point = null;

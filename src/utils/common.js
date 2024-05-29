@@ -38,8 +38,6 @@ export const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
 
 export const toCapitalize = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 
-export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
-
 export const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {
     return 0;
