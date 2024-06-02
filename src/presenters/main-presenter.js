@@ -1,6 +1,7 @@
 import SortView from '../view/sort-view';
 import EmptyView from '../view/empty-view';
 import NewPointButtonView from '../view/new-point-button-view';
+import LoadingView from '../view/loading-view.js';
 import PointsModel from '../models/points-model';
 import FilterModel from '../models/filter-model';
 import PointPresenter from '../presenters/point-presenter';
@@ -9,41 +10,31 @@ import PointInfoPresenter from './point-info-presenter';
 import NewPointPresenter from './new-point-presenter';
 import {remove, render, RenderPosition} from '../framework/render';
 import {sortListByDate, sortListByPrice, sortListByTime} from '../utils/common';
-import {SortType, UpdateType, UserAction, FilterType} from '../constants/constants';
+import {SortType, UpdateType, UserAction, FilterType, END_POINT, AUTHORIZATION} from '../constants/constants';
 import {filter} from '../utils/filters';
+import PointsApiService from '../points-api-service';
 
 export default class MainPresenter {
-  #pointsModel = new PointsModel();
+  #pointsModel = new PointsModel(new PointsApiService(END_POINT, AUTHORIZATION));
   #filterModel = new FilterModel();
   #sortContainerElement = document.querySelector('#sort-container');
   #tripMainElement = document.querySelector('.trip-main');
+  #pageMainElement = document.querySelector('.page-main');
   #sortComponent = null;
   #noPointComponent = null;
   #newPointButtonComponent = null;
+  #loadingComponent = new LoadingView();
   #filterPresenter = null;
   #pointInfoPresenter = null;
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
-  constructor() {
+  constructor () {
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-
-    this.#newPointPresenter = new NewPointPresenter(
-      this.#pointsModel.destinations,
-      this.#pointsModel.offers,
-      this.#handleViewAction,
-      this.#handleNewTaskFormClose,
-    );
-    this.#filterPresenter = new FilterPresenter(
-      this.#filterModel,
-      this.#pointsModel
-    );
-    this.#pointInfoPresenter = new PointInfoPresenter(
-      this.#pointsModel
-    );
   }
 
   get points() {
@@ -64,8 +55,12 @@ export default class MainPresenter {
   }
 
   init() {
-    this.#renderNewPointButton();
+    this.#initFilterPresenter();
+    this.#initPointInfoPresenter();
     this.#renderBoard();
+    this.#pointsModel.init().finally(() => {
+      this.#renderNewPointButton();
+    });
   }
 
   #handleModeChange = () => {
@@ -100,10 +95,21 @@ export default class MainPresenter {
         this.#clearBoard(true);
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBoard();
+        break;
     }
   };
 
   #renderBoard = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    this.#initNewPointPresenter();
     this.#pointInfoPresenter.init();
     this.#filterPresenter.init();
 
@@ -121,6 +127,7 @@ export default class MainPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
+    remove(this.#loadingComponent);
     remove(this.#sortComponent);
     remove(this.#noPointComponent);
 
@@ -142,7 +149,7 @@ export default class MainPresenter {
     this.#renderBoard();
   };
 
-  #handleNewTaskFormClose = () => {
+  #handleNewPointFormClose = () => {
     this.#newPointButtonComponent.element.disabled = false;
   };
 
@@ -155,6 +162,10 @@ export default class MainPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#pageMainElement, RenderPosition.AFTERBEGIN);
   }
 
   #renderNewPointButton() {
@@ -176,5 +187,22 @@ export default class MainPresenter {
     );
     pointPresenter.init(point);
     this.#pointPresenters.set(point.id, pointPresenter);
+  };
+
+  #initNewPointPresenter = () => {
+    this.#newPointPresenter = new NewPointPresenter(
+      this.#pointsModel.destinations,
+      this.#pointsModel.offers,
+      this.#handleViewAction,
+      this.#handleNewPointFormClose,
+    );
+  };
+
+  #initFilterPresenter = () => {
+    this.#filterPresenter = new FilterPresenter(this.#filterModel, this.#pointsModel);
+  };
+
+  #initPointInfoPresenter = () => {
+    this.#pointInfoPresenter = new PointInfoPresenter(this.#pointsModel);
   };
 }

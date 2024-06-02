@@ -1,21 +1,60 @@
-import pointsMock from '../mocks/points-mock.json';
-import offersMock from '../mocks/offers-mock.json';
-import destinationsMock from '../mocks/destinations-mock.json';
-import {FilterType} from '../constants/constants';
+import {FilterType, UpdateType} from '../constants/constants';
 import {humanizeDateFormat, isDatesInOneMonth, sortListByDate} from '../utils/common';
 import Observable from '../framework/observable';
 
 export default class PointsModel extends Observable{
-  #points = pointsMock;
-  #offers = offersMock;
-  #destinations = destinationsMock;
+  #pointsApiService = null;
+  #points = null;
+  #offers = null;
+  #destinations = null;
   #filters = Object.values(FilterType);
+
+  constructor(pointsApiService) {
+    super();
+    this.#pointsApiService = pointsApiService;
+  }
+
+  async init() {
+    try {
+      await Promise.allSettled([
+        this.#pointsApiService.points,
+        this.#pointsApiService.destinations,
+        this.#pointsApiService.offers
+      ]).then((results) => {
+        this.#points = results[0].status === 'fulfilled' ? results[0].value.map(this.#adaptToClient) : [];
+        this.#destinations = results[1].status === 'fulfilled' ? results[1].value : [];
+        this.#offers = results[2].status === 'fulfilled' ? results[2].value : [];
+      });
+    } catch(err) {
+      this.#points = [];
+      this.#destinations = [];
+      this.#offers = [];
+    }
+
+    this._notify(UpdateType.INIT);
+  }
+
+  #adaptToClient(point) {
+    const adaptedPoint = {...point,
+      basePrice: point['base_price'],
+      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
+      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      isFavorite: point['is_favorite'],
+    };
+
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  }
 
   get points() {
     return this.#points.map((item) => {
-      const destination = this.#destinations.find(({id}) => id === item.destination);
-      const offersListByType = this.#offers.find(({type}) => type === item.type);
-      const offers = offersListByType && offersListByType.offers.filter(({id}) => item.offers.includes(id));
+      const destination = this.#destinations ? this.#destinations.find(({id}) => id === item.destination) : {};
+      const offersListByType = this.#offers ? this.#offers.find(({type}) => type === item.type) : [];
+      const offers = offersListByType && offersListByType.offers?.filter(({id}) => item.offers.includes(id)) || [];
 
       return {
         ...item,
@@ -81,17 +120,25 @@ export default class PointsModel extends Observable{
     this.#points = points;
   }
 
-  updatePoint(updateType, update) {
+  async updatePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
-    this.points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
+
+    try {
+      const response = await this.#pointsApiService.updatePoints(update);
+      const updatedPoint = this.#adaptToClient(response);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, updatedPoint);
+    } catch(err) {
+      throw new Error('Can\'t update point');
+    }
 
     this._notify(updateType, update);
   }
