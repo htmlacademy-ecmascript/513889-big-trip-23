@@ -26,6 +26,8 @@ export const humanizeDuration = (dateFrom, dateTo) => {
   return dayjs.duration(diff).format('mm[M]');
 };
 
+export const isDatesInOneMonth = (dateA, dateB) => dayjs(dateA).format('MMM') === dayjs(dateB).format('MMM');
+
 export const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format('DD/MM/YY hh:mm') : '';
 
 export const isPointFuture = ({ dateFrom }) => dayjs().isBefore(dateFrom);
@@ -33,8 +35,6 @@ export const isPointFuture = ({ dateFrom }) => dayjs().isBefore(dateFrom);
 export const isPointPresent = ({ dateFrom, dateTo }) => dayjs().isAfter(dateFrom) && dayjs().isBefore(dateTo);
 
 export const isPointPast = ({ dateTo }) => dayjs().isAfter(dateTo);
-
-export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
 export const toCapitalize = (string) => `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 
@@ -58,8 +58,6 @@ export const sortListByDate = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateTo, pointB.dateTo);
   return weight ?? dayjs(pointA.dateTo).diff(dayjs(pointB.dateTo));
 };
-
-export const sortListByEvent = (pointA, pointB) => pointB.destination.name - pointA.destination.name;
 
 export const sortListByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
