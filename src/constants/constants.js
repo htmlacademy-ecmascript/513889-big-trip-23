@@ -41,4 +41,8 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT'
 };
+
+export const AUTHORIZATION = 'Basic er883jdzbdw';
+export const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';

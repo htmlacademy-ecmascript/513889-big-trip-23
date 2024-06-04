@@ -2,7 +2,7 @@ import flatpickr from 'flatpickr';
 import {nanoid} from 'nanoid';
 import 'flatpickr/dist/flatpickr.min.css';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { EVENT_TYPES } from '../constants/constants';
+import {EVENT_TYPES} from '../constants/constants';
 import {humanizeDateCalendarFormat, toCapitalize} from '../utils/common';
 
 export default class EditView extends AbstractStatefulView {
@@ -45,7 +45,7 @@ export default class EditView extends AbstractStatefulView {
       this.#componentType = 'new';
       this.#isCreateDisabled = true;
     }
-    this.#offers = offers.find(({type}) => type === this._state.type)?.offers;
+    this.#offers = offers;
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleFormCloseClick = onFormCloseClick;
@@ -54,13 +54,13 @@ export default class EditView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
-  get #getIsCreateDisabled () {
-    return this.#componentType === 'new' && (
+  isCreateDisabled() {
+    const saveButton = document.querySelector('.event__save-btn');
+    saveButton.disabled =
       Object.keys(this._state.destination).length === 0
       || !this._state.dateFrom
       || !this._state.dateTo
-      || this._state.basePrice === 0
-    );
+      || this._state.basePrice === 0;
   }
 
   removeElement() {
@@ -111,8 +111,7 @@ export default class EditView extends AbstractStatefulView {
     evt.preventDefault();
     if (evt.target.classList.contains('event__type-input')) {
       this.updateElement({
-        type: evt.target.value,
-        offers: [],
+        type: evt.target.value
       });
     }
   };
@@ -120,20 +119,18 @@ export default class EditView extends AbstractStatefulView {
   #destinationChangeHandler = (evt) => {
     const name = evt.target.value;
     const newDestination = this.#destinations.find((destination) => destination.name === name);
-
     if (!newDestination) {
       return;
     }
-
     this.updateElement({
       destination: newDestination,
     });
+    this.isCreateDisabled();
   };
 
   #priceChangeHandler = (evt) => {
-    this.updateElement({
-      basePrice: +evt.target.value,
-    });
+    this._setState({ basePrice: +evt.target.value });
+    this.isCreateDisabled();
   };
 
   #formDeleteClickHandler = (evt) => {
@@ -148,7 +145,7 @@ export default class EditView extends AbstractStatefulView {
 
     inputs.forEach((input) => {
       if (input.checked) {
-        const offer = this.#offers.find(({id}) => id === input.value);
+        const offer = this.#offers?.find(({type}) => type === this._state.type)?.offers.find(({id}) => id === input.value);
         offers.push(offer);
       }
     });
@@ -187,15 +184,15 @@ export default class EditView extends AbstractStatefulView {
   };
 
   #dateFromCloseHandler = ([userDate]) => {
-    this.updateElement({
-      dateFrom: userDate,
-    });
+    this._setState({ dateFrom: userDate });
+    this.#datepickerFrom.set('minDate', this._state.dateFrom);
+    this.isCreateDisabled();
   };
 
   #dateToCloseHandler = ([userDate]) => {
-    this.updateElement({
-      dateTo: userDate,
-    });
+    this._setState({ dateTo: userDate });
+    this.#datepickerTo.set('maxDate', this._state.dateTo);
+    this.isCreateDisabled();
   };
 
   resetForm = (point) => {
@@ -221,13 +218,13 @@ export default class EditView extends AbstractStatefulView {
   }
 
   #constructDestinationList() {
-    return this.#destinations.map(({name}) => `
+    return this.#destinations?.map(({name}) => `
       <option value="${name}"></option>
-    `).join('');
+    `).join('') || '';
   }
 
   #constructOffersList() {
-    return this.#offers?.map((offer) => {
+    return this.#offers?.find(({type}) => type === this._state.type)?.offers?.map((offer) => {
       const titleLastWord = offer.title.split(' ').pop();
       return `
         <div class="event__offer-selector">
@@ -324,9 +321,9 @@ export default class EditView extends AbstractStatefulView {
             <button
              class="event__save-btn btn btn--blue"
              type="submit"
-             ${this.#getIsCreateDisabled ? 'disabled' : ''}
+             ${this.#isCreateDisabled ? 'disabled' : ''}
             >
-                Save
+              Save
             </button>
             <button class="event__reset-btn" type="reset">${this.#componentType === 'edit' ? 'Delete' : 'Cancel'}</button>
             ${this.#componentType === 'edit' ? `
@@ -337,26 +334,28 @@ export default class EditView extends AbstractStatefulView {
           </header>
           ${Object.keys(this._state.destination).length > 0 ? `
             <section class="event__details">
-
-              <section class="event__section  event__section--offers">
-                <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-                <div class="event__available-offers">
-                  ${this.#constructOffersList()}
-                </div>
-              </section>
-              ${this._state.offers.length > 0 ? '' : ''}
-              <section class="event__section  event__section--destination">
-                <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-                <p class="event__destination-description">
-                  ${this._state.destination?.description}
-                </p>
-                <div class="event__photos-container">
-                  <div class="event__photos-tape">
-                    ${this._state.destination?.pictures?.map((picture) => `
-                      <img class="event__photo" src="${picture.src}" alt="${picture.description}">
-                    `)}
-                </div>
-              </section>
+              ${this.#offers?.find(({type}) => type === this._state.type)?.offers.length > 0 ? `
+                <section class="event__section  event__section--offers">
+                  <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+                  <div class="event__available-offers">
+                    ${this.#constructOffersList()}
+                  </div>
+                </section>
+              ` : ''}
+              ${Object.keys(this._state.destination).length > 0 ? `
+                <section class="event__section  event__section--destination">
+                  <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+                  <p class="event__destination-description">
+                    ${this._state.destination?.description}
+                  </p>
+                  <div class="event__photos-container">
+                    <div class="event__photos-tape">
+                      ${this._state.destination?.pictures?.map((picture) => `
+                        <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+                      `).join('')}
+                  </div>
+                </section>
+              ` : ''}
             </section>
           ` : ''}
         </form>
