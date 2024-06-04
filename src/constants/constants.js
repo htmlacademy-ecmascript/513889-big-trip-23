@@ -44,5 +44,10 @@ export const UpdateType = {
   INIT: 'INIT'
 };
 
+export const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export const AUTHORIZATION = 'Basic er883jdzbdw';
 export const END_POINT = 'https://23.objects.htmlacademy.pro/big-trip';
