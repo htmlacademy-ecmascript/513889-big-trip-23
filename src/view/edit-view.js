@@ -27,7 +27,7 @@ export default class EditView extends AbstractStatefulView {
   }) {
     super();
     if(point) {
-      this._setState({...point});
+      this._setState(EditView.parsePointToState(point));
       this.#point = point;
     } else {
       const blankPoint = {
@@ -54,7 +54,7 @@ export default class EditView extends AbstractStatefulView {
     this._restoreHandlers();
   }
 
-  isCreateDisabled() {
+  createValidation() {
     const saveButton = document.querySelector('.event__save-btn');
     saveButton.disabled =
       Object.keys(this._state.destination).length === 0
@@ -96,7 +96,7 @@ export default class EditView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit({
-      ...this._state,
+      ...EditView.parsePointToTask(this._state),
       destination: this._state.destination.id,
       offers: this._state.offers?.map(({id}) => id) || []
     });
@@ -125,17 +125,17 @@ export default class EditView extends AbstractStatefulView {
     this.updateElement({
       destination: newDestination,
     });
-    this.isCreateDisabled();
+    this.createValidation();
   };
 
   #priceChangeHandler = (evt) => {
     this._setState({ basePrice: +evt.target.value });
-    this.isCreateDisabled();
+    this.createValidation();
   };
 
   #formDeleteClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormDeleteClick({...this._state});
+    this.#handleFormDeleteClick(EditView.parsePointToTask(this._state));
   };
 
   #offerChangeHandler = (evt) => {
@@ -186,18 +186,37 @@ export default class EditView extends AbstractStatefulView {
   #dateFromCloseHandler = ([userDate]) => {
     this._setState({ dateFrom: userDate });
     this.#datepickerFrom.set('minDate', this._state.dateFrom);
-    this.isCreateDisabled();
+    this.createValidation();
   };
 
   #dateToCloseHandler = ([userDate]) => {
     this._setState({ dateTo: userDate });
     this.#datepickerTo.set('maxDate', this._state.dateTo);
-    this.isCreateDisabled();
+    this.createValidation();
   };
 
   resetForm = (point) => {
-    this.updateElement({...point});
+    this.updateElement(EditView.parsePointToState(point));
   };
+
+  static parsePointToState(point) {
+    return {
+      ...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
+  }
+
+  static parsePointToTask(state) {
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
+  }
 
   #constructEventTypeList() {
     return EVENT_TYPES.map((event) => `
@@ -256,12 +275,11 @@ export default class EditView extends AbstractStatefulView {
                 <span class="visually-hidden">Choose event type</span>
                 <img class="event__type-icon" width="17" height="17" src="img/icons/${this._state.type}.png" alt="Event type icon">
               </label>
-              <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox">
+              <input class="event__type-toggle visually-hidden" id="event-type-toggle-1" type="checkbox" ${this._state.isDisabled ? 'disabled' : ''}>
 
               <div class="event__type-list">
                 <fieldset class="event__type-group">
                   <legend class="visually-hidden">Event type</legend>
-
                   ${this.#constructEventTypeList()}
                 </fieldset>
               </div>
@@ -278,6 +296,7 @@ export default class EditView extends AbstractStatefulView {
                 name="event-destination-${this._state.id}"
                 value="${this._state.destination?.name ? this._state.destination?.name : ''}"
                 list="destination-list-${this._state.id}"
+                ${this._state.isDisabled ? 'disabled' : ''}
               >
               <datalist id="destination-list-${this._state.id}">
                 ${this.#constructDestinationList()}
@@ -292,6 +311,7 @@ export default class EditView extends AbstractStatefulView {
                 type="text"
                 name="event-start-time"
                 value="${humanizeDateCalendarFormat(this._state.dateFrom)}"
+                ${this._state.isDisabled ? 'disabled' : ''}
               >
               &mdash;
               <label class="visually-hidden" for="event-end-time-${this._state.id}">To</label>
@@ -301,6 +321,7 @@ export default class EditView extends AbstractStatefulView {
                 type="text"
                 name="event-end-time"
                 value="${humanizeDateCalendarFormat(this._state.dateTo)}"
+                ${this._state.isDisabled ? 'disabled' : ''}
               >
             </div>
 
@@ -312,20 +333,28 @@ export default class EditView extends AbstractStatefulView {
               <input
                 class="event__input event__input--price"
                 id="event-price-${this._state.id}"
+                min="0"
                 type="number"
                 name="event-price"
                 value="${this._state.basePrice}"
+                ${this._state.isDisabled ? 'disabled' : ''}
               >
             </div>
 
             <button
              class="event__save-btn btn btn--blue"
              type="submit"
-             ${this.#isCreateDisabled ? 'disabled' : ''}
+             ${this._state.isDisabled || this.#isCreateDisabled ? 'disabled' : ''}
             >
-              Save
+              ${this._state.isSaving ? 'Saving...' : 'Save'}
             </button>
-            <button class="event__reset-btn" type="reset">${this.#componentType === 'edit' ? 'Delete' : 'Cancel'}</button>
+            <button
+              class="event__reset-btn"
+              type="reset"
+              ${this._state.isDisabled ? 'disabled' : ''}
+            >
+              ${this.#componentType === 'edit' ? `${this._state.isDeleting ? 'Deleting...' : 'Delete'}` : 'Cancel'}
+            </button>
             ${this.#componentType === 'edit' ? `
               <button class="event__rollup-btn" type="button">
                 <span class="visually-hidden">Open event</span>
