@@ -1,34 +1,39 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {
+  MSEC_IN_HOUR,
+  MSEC_IN_DAY,
+  INVERTED_SHORT_DATE_TEMPLATE,
+  LONG_EVENT_DURATION_TEMPLATE,
+  AVERAGE_EVENT_DURATION_TEMPLATE,
+  SHORT_EVENT_DURATION_TEMPLATE,
+  MONTH_TEMPLATE,
+  DATE_EVENT_TEMPLATE
+} from '../constants/constants';
 
 dayjs.extend(duration);
 
-const MSEC_IN_SEC = 1000;
-const MSEC_IN_MIN = 60 * MSEC_IN_SEC;
-const MSEC_IN_HOUR = 60 * MSEC_IN_MIN;
-const MSEC_IN_DAY = 24 * MSEC_IN_HOUR;
-
 export const getDuration = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom));
 
-export const humanizeDateFormat = (date, format = 'MMM DD') => date ? dayjs(date).format(format) : '';
+export const humanizeDateFormat = (date, format = INVERTED_SHORT_DATE_TEMPLATE) => date ? dayjs(date).format(format) : '';
 
 export const humanizeDuration = (dateFrom, dateTo) => {
   const diff = getDuration(dateFrom, dateTo);
 
   if (diff >= MSEC_IN_DAY) {
-    return dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
+    return dayjs.duration(diff).format(LONG_EVENT_DURATION_TEMPLATE);
   }
 
   if (diff >= MSEC_IN_HOUR) {
-    return dayjs.duration(diff).format('HH[H] mm[M]');
+    return dayjs.duration(diff).format(AVERAGE_EVENT_DURATION_TEMPLATE);
   }
 
-  return dayjs.duration(diff).format('mm[M]');
+  return dayjs.duration(diff).format(SHORT_EVENT_DURATION_TEMPLATE);
 };
 
-export const isDatesInOneMonth = (dateA, dateB) => dayjs(dateA).format('MMM') === dayjs(dateB).format('MMM');
+export const isDatesInOneMonth = (dateA, dateB) => dayjs(dateA).format(MONTH_TEMPLATE) === dayjs(dateB).format(MONTH_TEMPLATE);
 
-export const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format('DD/MM/YY hh:mm') : '';
+export const humanizeDateCalendarFormat = (date) => date ? dayjs(date).format(DATE_EVENT_TEMPLATE) : '';
 
 export const isPointFuture = ({ dateFrom }) => dayjs().isBefore(dateFrom);
 

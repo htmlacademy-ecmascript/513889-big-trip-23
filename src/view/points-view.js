@@ -1,5 +1,11 @@
 import AbstractView from '../framework/view/abstract-view';
 import { humanizeDateFormat, humanizeDuration } from '../utils/common';
+import he from 'he';
+import {
+  FULL_MACHINE_DATE_TEMPLATE,
+  MACHINE_DATE_TEMPLATE,
+  TIME_TEMPLATE
+} from '../constants/constants';
 
 export default class PointsView extends AbstractView {
   #point = {};
@@ -47,7 +53,7 @@ export default class PointsView extends AbstractView {
         <div class="event">
           <time
             class="event__date"
-            datetime="${humanizeDateFormat(this.#point.dateFrom, 'YYYY-MM-DD')}"
+            datetime="${humanizeDateFormat(this.#point.dateFrom, MACHINE_DATE_TEMPLATE)}"
           >
             ${humanizeDateFormat(this.#point.dateFrom)}
           </time>
@@ -60,27 +66,27 @@ export default class PointsView extends AbstractView {
               alt="Event type icon"
             >
           </div>
-          <h3 class="event__title">${this.#point.type} ${this.#point.destination?.name}</h3>
+          <h3 class="event__title">${this.#point.type} ${he.encode(this.#point.destination?.name)}</h3>
           <div class="event__schedule">
             <p class="event__time">
               <time
                 class="event__start-time"
-                datetime="${humanizeDateFormat(this.#point.dateFrom, 'YYYY-MM-DD[T]HH:mm')}"
+                datetime="${humanizeDateFormat(this.#point.dateFrom, FULL_MACHINE_DATE_TEMPLATE)}"
               >
-                ${humanizeDateFormat(this.#point.dateFrom, 'HH:mm')}
+                ${humanizeDateFormat(this.#point.dateFrom, TIME_TEMPLATE)}
               </time>
               &mdash;
               <time
                 class="event__end-time"
-                datetime="${humanizeDateFormat(this.#point.dateTo, 'YYYY-MM-DD[T]HH:mm')}"
+                datetime="${humanizeDateFormat(this.#point.dateTo, FULL_MACHINE_DATE_TEMPLATE)}"
               >
-                ${humanizeDateFormat(this.#point.dateTo, 'HH:mm')}
+                ${humanizeDateFormat(this.#point.dateTo, TIME_TEMPLATE)}
               </time>
             </p>
             <p class="event__duration">${humanizeDuration(this.#point.dateFrom, this.#point.dateTo)}</p>
           </div>
           <p class="event__price">
-            &euro;&nbsp;<span class="event__price-value">${this.#price}</span>
+            &euro;&nbsp;<span class="event__price-value">${he.encode(`${this.#price}`)}</span>
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
