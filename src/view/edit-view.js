@@ -2,8 +2,9 @@ import flatpickr from 'flatpickr';
 import {nanoid} from 'nanoid';
 import 'flatpickr/dist/flatpickr.min.css';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import {EVENT_TYPES} from '../constants/constants';
+import {EVENT_TYPES, DATEPICKER_TEMPLATE} from '../constants/constants';
 import {humanizeDateCalendarFormat, toCapitalize} from '../utils/common';
+import he from 'he';
 
 export default class EditView extends AbstractStatefulView {
   #point = null;
@@ -160,7 +161,7 @@ export default class EditView extends AbstractStatefulView {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector(`#event-start-time-${this._state.id}`),
       {
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DATEPICKER_TEMPLATE,
         defaultDate: this._state.dateFrom,
         enableTime: true,
         'time_24hr': true,
@@ -173,7 +174,7 @@ export default class EditView extends AbstractStatefulView {
     this.#datepickerTo = flatpickr(
       this.element.querySelector(`#event-end-time-${this._state.id}`),
       {
-        dateFormat: 'd/m/y H:i',
+        dateFormat: DATEPICKER_TEMPLATE,
         defaultDate: this._state.dateTo,
         minDate: this.#datepickerFrom.selectedDates[0],
         enableTime: true,
@@ -294,7 +295,7 @@ export default class EditView extends AbstractStatefulView {
                 id="event-destination-${this._state.id}"
                 type="text"
                 name="event-destination-${this._state.id}"
-                value="${this._state.destination?.name ? this._state.destination?.name : ''}"
+                value="${this._state.destination?.name ? he.encode(this._state.destination?.name) : ''}"
                 list="destination-list-${this._state.id}"
                 ${this._state.isDisabled ? 'disabled' : ''}
               >
@@ -336,7 +337,7 @@ export default class EditView extends AbstractStatefulView {
                 min="0"
                 type="number"
                 name="event-price"
-                value="${this._state.basePrice}"
+                value="${he.encode(`${this._state.basePrice}`)}"
                 ${this._state.isDisabled ? 'disabled' : ''}
               >
             </div>

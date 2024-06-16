@@ -1,4 +1,9 @@
-import {FilterType, UpdateType} from '../constants/constants';
+import {
+  DAY_MONTH_TEMPLATE,
+  SHORT_DATE_TEMPLATE,
+  FilterType,
+  UpdateType
+} from '../constants/constants';
 import {humanizeDateFormat, isDatesInOneMonth, sortListByDate} from '../utils/common';
 import Observable from '../framework/observable';
 
@@ -95,11 +100,11 @@ export default class PointsModel extends Observable{
     const dateTo = this.points[this.points.length - 1]?.dateTo || '';
 
     const startingDateTemplate = isDatesInOneMonth(dateFrom, dateTo)
-      ? 'DD'
-      : 'DD MMM';
+      ? DAY_MONTH_TEMPLATE
+      : SHORT_DATE_TEMPLATE;
 
     const startingDate = humanizeDateFormat(dateFrom, startingDateTemplate);
-    const endingDate = humanizeDateFormat(dateTo, 'DD MMM');
+    const endingDate = humanizeDateFormat(dateTo, SHORT_DATE_TEMPLATE);
 
     return `${startingDate} - ${endingDate}`;
   }
